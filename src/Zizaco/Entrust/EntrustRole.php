@@ -58,40 +58,29 @@ class EntrustRole extends Ardent
      * usable again
      *
      * @param string $value
-     * permissoins json 
+     * permissoins json
      */
     public function getPermissionsAttribute($value)
     {
-        return json_decode($value);
+        return (array)json_decode($value);
     }
 
     /**
      * Before delete all constrained foreign relations
      *
-     * @param string $value
+     * @param bool $forced
+     * @return bool
      */
-    public function setPermissionsAttribute($value)
+    public function beforeDelete( $forced = false )
     {
-        $this->attributes['permissions'] = json_encode($value);
+        try {
+            \DB::table('assigned_roles')->where('role_id', $this->id)->delete();
+            \DB::table('permission_role')->where('role_id', $this->id)->delete();
+        } catch(Execption $e) {}
+
+        return true;
     }
 
-    /**
-     * When an serialized permission comes from the database
-     * it may become an array within the object.
-     *
-     * @param  array  $attributes
-     * @param  bool   $sync
-     * @return void
-     */
-    public function setRawAttributes(array $attributes, $sync = false)
-    {
-        if( isset($attributes['permissions']) )
-        {
-            $attributes['permissions'] = json_decode($attributes['permissions'], true);
-        }
-
-        parent::setRawAttributes( $attributes, $sync );
-    }
 
     /**
      * Save permissions inputted
