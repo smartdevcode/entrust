@@ -249,7 +249,7 @@ Entrust::routeNeedsPermission( 'admin/post*', array('manage_posts','manage_comme
 Entrust::routeNeedsRole( 'admin/advanced*', array('Owner','Writer') );
 ```
 
-Both of these methods accepts a third parameter. If the third parameter is null then the return of a prohibited access will be `App::abort(403)`. Otherwise the third parameter will be returned. So you can use it like:
+Both of these methods accepts a third parameter. If the third parameter is null then the return of a prohibited access will be `App::abort(404)`. Otherwise the third parameter will be returned. So you can use it like:
 
 ```php
 Entrust::routeNeedsRole( 'admin/advanced*', 'Owner', Redirect::to('/home') );
@@ -261,14 +261,10 @@ you want to allow access for multiple groups.
 
 ```php
 // If a user has `manage_posts`, `manage_comments` or both they will have access.
-Entrust::routeNeedsPermission( 'admin/post*', array('manage_posts','manage_comments'), null, false );
+Entrust::routeNeedsRole( 'admin/post*', array('manage_posts','manage_comments'), null, false );
 
 // If a user is a member of `Owner`, `Writer` or both they will have access.
-Entrust::routeNeedsRole( 'admin/advanced*', array('Owner','Writer'), null, false );
-
-// If a user is a member of `Owner`, `Writer` or both, or user has `manage_posts`, `manage_comments` they will have access.
-// You can set the 4th parameter to true then user must be member of Role and must has Permission.
-Entrust::routeNeedsRoleOrPermission( 'admin/advanced*', array('Owner','Writer'), array('manage_posts','manage_comments'), null, false);
+Entrust::routeNeedsPermission( 'admin/advanced*', array('Owner','Writer'), null, false );
 ```
 
 ### Route filter
@@ -315,30 +311,6 @@ SQLSTATE[HY000]: General error: 1005 Can't create table 'laravelbootstrapstarter
   ))
 ```
 Then it's likely that the `id` column in your user table does not match the `user_id` column in `assigned_roles`. Match sure both are `INT(10)`.
-
-Name is having issues saving.
-
-EntrustRole->name has a length limitation set within the rules variable of the [EntrustRole class](https://github.com/Zizaco/entrust/blob/master/src/Zizaco/Entrust/EntrustRole.php#L21).
-
-You can adjust it by changing your Role Model.
-
-```php
-<?php
-
-use Zizaco\Entrust\EntrustRole;
-
-class Role extends EntrustRole
-{
-    /**
-     * Ardent validation rules
-     *
-     * @var array
-     */
-    public static $rules = array(
-      'name' => 'required|between:4,255'
-    );
-}
-```
 
 ## License
 
