@@ -1,6 +1,7 @@
 <?php namespace Zizaco\Entrust;
 
 use LaravelBook\Ardent\Ardent;
+use Config;
 
 class EntrustRole extends Ardent
 {
@@ -10,7 +11,7 @@ class EntrustRole extends Ardent
      *
      * @var string
      */
-    protected $table = 'roles';
+    protected $table;
 
     /**
      * Ardent validation rules
@@ -22,11 +23,20 @@ class EntrustRole extends Ardent
     );
 
     /**
+     * Creates a new instance of the model
+     */
+    public function __construct(array $attributes = array())
+    {
+        parent::__construct($attributes);
+        $this->table = Config::get('entrust::roles_table');
+    }
+
+    /**
      * Many-to-Many relations with Users
      */
     public function users()
     {
-        return $this->belongsToMany('User', 'assigned_roles');
+        return $this->belongsToMany(Config::get('auth.model'), 'assigned_roles');
     }
 
     /**
@@ -38,7 +48,7 @@ class EntrustRole extends Ardent
         // To maintain backwards compatibility we'll catch the exception if the Permission table doesn't exist.
         // TODO remove in a future version
         try {
-            return $this->belongsToMany('Permission');
+            return $this->belongsToMany(Config::get('entrust::permission'));
         } catch(Execption $e) {}
     }
 
@@ -123,6 +133,36 @@ class EntrustRole extends Ardent
             $permission = $permission['id'];
 
         $this->perms()->detach( $permission );
+    }
+
+    /**
+     * Attach multiple permissions to current role
+     *
+     * @param $permissions
+     * @access public
+     * @return void
+     */
+    public function attachPermissions($permissions)
+    {
+        foreach ($permissions as $permission)
+        {
+            $this->attachPermission($permission);
+        }
+    }
+
+    /**
+     * Detach multiple permissions from current role
+     *
+     * @param $permissions
+     * @access public
+     * @return void
+     */
+    public function detachPermissions($permissions)
+    {
+        foreach ($permissions as $permission)
+        {
+            $this->detachPermission($permission);
+        }
     }
 
 }
