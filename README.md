@@ -178,7 +178,7 @@ $user->can("manage_posts"); // true
 $user->can("manage_users"); // false
 ```
 
-You can have as many `Role`s as you want for each `User` and vice versa.
+You can have as many `Role`s was you want in each `User` and vice versa.
 
 More advanced checking can be done using the awesome `ability` function. It takes in three parameters (roles, permissions, options).
 `roles` is a set of roles to check. `permissions` is a set of permissions to check.
@@ -249,7 +249,7 @@ Entrust::routeNeedsPermission( 'admin/post*', array('manage_posts','manage_comme
 Entrust::routeNeedsRole( 'admin/advanced*', array('Owner','Writer') );
 ```
 
-Both of these methods accepts a third parameter. If the third parameter is null then the return of a prohibited access will be `App::abort(403)`. Otherwise the third parameter will be returned. So you can use it like:
+Both of these methods accept a third parameter. If the third parameter is null then the return of a prohibited access will be `App::abort(403)`. Otherwise the third parameter will be returned. So you can use it like:
 
 ```php
 Entrust::routeNeedsRole( 'admin/advanced*', 'Owner', Redirect::to('/home') );
