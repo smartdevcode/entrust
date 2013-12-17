@@ -1,7 +1,6 @@
 <?php namespace Zizaco\Entrust;
 
 use LaravelBook\Ardent\Ardent;
-use Config;
 
 class EntrustRole extends Ardent
 {
@@ -11,7 +10,7 @@ class EntrustRole extends Ardent
      *
      * @var string
      */
-    protected $table;
+    protected $table = 'roles';
 
     /**
      * Ardent validation rules
@@ -23,20 +22,11 @@ class EntrustRole extends Ardent
     );
 
     /**
-     * Creates a new instance of the model
-     */
-    public function __construct(array $attributes = array())
-    {
-        parent::__construct($attributes);
-        $this->table = Config::get('entrust::roles_table');
-    }
-
-    /**
      * Many-to-Many relations with Users
      */
     public function users()
     {
-        return $this->belongsToMany(Config::get('auth.model'), Config::get('entrust::assigned_roles_table'));
+        return $this->belongsToMany('User', 'assigned_roles');
     }
 
     /**
@@ -48,7 +38,7 @@ class EntrustRole extends Ardent
         // To maintain backwards compatibility we'll catch the exception if the Permission table doesn't exist.
         // TODO remove in a future version
         try {
-            return $this->belongsToMany(Config::get('entrust::permission'));
+            return $this->belongsToMany('Permission');
         } catch(Execption $e) {}
     }
 
@@ -84,8 +74,8 @@ class EntrustRole extends Ardent
     public function beforeDelete( $forced = false )
     {
         try {
-            \DB::table(Config::get('entrust::assigned_roles_table'))->where('role_id', $this->id)->delete();
-            \DB::table(Config::get('entrust::permission_role_table'))->where('role_id', $this->id)->delete();
+            \DB::table('assigned_roles')->where('role_id', $this->id)->delete();
+            \DB::table('permission_role')->where('role_id', $this->id)->delete();
         } catch(Execption $e) {}
 
         return true;
