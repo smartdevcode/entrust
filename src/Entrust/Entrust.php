@@ -7,25 +7,25 @@ class Entrust
 {
     /**
      * Laravel application
-     * 
+     *
      * @var Illuminate\Foundation\Application
      */
-    public $_app;
+    public $app;
 
     /**
      * Create a new confide instance.
-     * 
+     *
      * @param  Illuminate\Foundation\Application  $app
      * @return void
      */
     public function __construct($app)
     {
-        $this->_app = $app;
+        $this->app = $app;
     }
 
     /**
      * Checks if the current user has a Role by its name
-     * 
+     *
      * @param string $name Role name.
      *
      * @access public
@@ -35,7 +35,7 @@ class Entrust
     public function hasRole( $permission )
     {
         $user = $this->user();
-        
+
         if( $user )
         {
             return $user->hasRole( $permission );
@@ -48,7 +48,7 @@ class Entrust
 
     /**
      * Check if the current user has a permission by its name
-     * 
+     *
      * @param string $permission Permission string.
      *
      * @access public
@@ -58,7 +58,7 @@ class Entrust
     public function can( $permission )
     {
         $user = $this->user();
-        
+
         if( $user )
         {
             return $user->can( $permission );
@@ -80,7 +80,7 @@ class Entrust
      */
     public function user()
     {
-        return $this->_app['auth']->user();
+        return $this->app->auth->user();
     }
 
     /**
@@ -126,17 +126,17 @@ class Entrust
         }
 
         // Same as Route::filter, registers a new filter
-        $this->_app['router']->filter($filter_name, $result);
+        $this->app->router->filter($filter_name, $result);
 
         // Same as Route::when, assigns a route pattern to the
         // previously created filter.
-        $this->_app['router']->when( $route, $filter_name );
+        $this->app->router->when( $route, $filter_name );
     }
 
     /**
      * Filters a route for the permission. If the third parameter
      * is null then return 403. Overwise the $result is returned
-     * 
+     *
      * @param string $route  Route pattern. i.e: "admin/*"
      * @param array|string $permissions   The permission needed.
      * @param mixed  $result i.e: Redirect::to('/')
@@ -178,11 +178,11 @@ class Entrust
         }
 
         // Same as Route::filter, registers a new filter
-        $this->_app['router']->filter($filter_name, $result);
+        $this->app->router->filter($filter_name, $result);
 
         // Same as Route::when, assigns a route pattern to the
         // previously created filter.
-        $this->_app['router']->when( $route, $filter_name );
+        $this->app->router->when( $route, $filter_name );
     }
 
     /**
@@ -242,10 +242,10 @@ class Entrust
         }
 
         // Same as Route::filter, registers a new filter
-        $this->_app['router']->filter($filter_name, $result);
+        $this->app->router->filter($filter_name, $result);
 
         // Same as Route::when, assigns a route pattern to the
         // previously created filter.
-        $this->_app['router']->when( $route, $filter_name );
+        $this->app->router->when( $route, $filter_name );
     }
 }
