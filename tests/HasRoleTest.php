@@ -33,7 +33,6 @@ class HasRoleTest extends PHPUnit_Framework_TestCase
         |------------------------------------------------------------
         */
         $user->shouldReceive('belongsToMany')
-            ->with('role_table_name', 'assigned_roles_table_name', 'user_id', 'role_id')
             ->andReturn($belongsToMany)
             ->once();
 
@@ -71,11 +70,6 @@ class HasRoleTest extends PHPUnit_Framework_TestCase
         $this->assertTrue($user->hasRole('RoleA'));
         $this->assertTrue($user->hasRole('RoleB'));
         $this->assertFalse($user->hasRole('RoleC'));
-
-        $this->assertTrue($user->hasRole(['RoleA', 'RoleB']));
-        $this->assertTrue($user->hasRole(['RoleA', 'RoleC']));
-        $this->assertFalse($user->hasRole(['RoleA', 'RoleC'], true));
-        $this->assertFalse($user->hasRole(['RoleC', 'RoleD']));
     }
 
     public function testCan()
@@ -107,11 +101,6 @@ class HasRoleTest extends PHPUnit_Framework_TestCase
         $this->assertTrue($user->can('manage_b'));
         $this->assertTrue($user->can('manage_c'));
         $this->assertFalse($user->can('manage_d'));
-
-        $this->assertTrue($user->can(['manage_a', 'manage_b', 'manage_c']));
-        $this->assertTrue($user->can(['manage_a', 'manage_b', 'manage_d']));
-        $this->assertFalse($user->can(['manage_a', 'manage_b', 'manage_d'], true));
-        $this->assertFalse($user->can(['manage_d', 'manage_e']));
     }
 
     public function testAbilityShouldReturnBoolean()
@@ -150,16 +139,16 @@ class HasRoleTest extends PHPUnit_Framework_TestCase
         |------------------------------------------------------------
         */
         $user->shouldReceive('hasRole')
-            ->with(m::anyOf($userRoleNameA, $userRoleNameB), m::anyOf(true, false))
+            ->with(m::anyOf($userRoleNameA, $userRoleNameB))
             ->andReturn(true);
         $user->shouldReceive('hasRole')
-            ->with(m::anyOf($nonUserRoleNameA, $nonUserRoleNameB), m::anyOf(true, false))
+            ->with(m::anyOf($nonUserRoleNameA, $nonUserRoleNameB))
             ->andReturn(false);
         $user->shouldReceive('can')
-            ->with(m::anyOf($userPermNameA, $userPermNameB, $userPermNameC), m::anyOf(true, false))
+            ->with(m::anyOf($userPermNameA, $userPermNameB, $userPermNameC))
             ->andReturn(true);
         $user->shouldReceive('can')
-            ->with(m::anyOf($nonUserPermNameA, $nonUserPermNameB), m::anyOf(true, false))
+            ->with(m::anyOf($nonUserPermNameA, $nonUserPermNameB))
             ->andReturn(false);
 
         /*
@@ -264,16 +253,16 @@ class HasRoleTest extends PHPUnit_Framework_TestCase
         |------------------------------------------------------------
         */
         $user->shouldReceive('hasRole')
-            ->with(m::anyOf($userRoleNameA, $userRoleNameB), m::anyOf(true, false))
+            ->with(m::anyOf($userRoleNameA, $userRoleNameB))
             ->andReturn(true);
         $user->shouldReceive('hasRole')
-            ->with(m::anyOf($nonUserRoleNameA, $nonUserRoleNameB), m::anyOf(true, false))
+            ->with(m::anyOf($nonUserRoleNameA, $nonUserRoleNameB))
             ->andReturn(false);
         $user->shouldReceive('can')
-            ->with(m::anyOf($userPermNameA, $userPermNameB, $userPermNameC), m::anyOf(true, false))
+            ->with(m::anyOf($userPermNameA, $userPermNameB, $userPermNameC))
             ->andReturn(true);
         $user->shouldReceive('can')
-            ->with(m::anyOf($nonUserPermNameA, $nonUserPermNameB), m::anyOf(true, false))
+            ->with(m::anyOf($nonUserPermNameA, $nonUserPermNameB))
             ->andReturn(false);
 
         /*
@@ -417,16 +406,16 @@ class HasRoleTest extends PHPUnit_Framework_TestCase
         |------------------------------------------------------------
         */
         $user->shouldReceive('hasRole')
-            ->with(m::anyOf($userRoleNameA, $userRoleNameB), m::anyOf(true, false))
+            ->with(m::anyOf($userRoleNameA, $userRoleNameB))
             ->andReturn(true);
         $user->shouldReceive('hasRole')
-            ->with(m::anyOf($nonUserRoleNameA, $nonUserRoleNameB), m::anyOf(true, false))
+            ->with(m::anyOf($nonUserRoleNameA, $nonUserRoleNameB))
             ->andReturn(false);
         $user->shouldReceive('can')
-            ->with(m::anyOf($userPermNameA, $userPermNameB, $userPermNameC), m::anyOf(true, false))
+            ->with(m::anyOf($userPermNameA, $userPermNameB, $userPermNameC))
             ->andReturn(true);
         $user->shouldReceive('can')
-            ->with(m::anyOf($nonUserPermNameA, $nonUserPermNameB), m::anyOf(true, false))
+            ->with(m::anyOf($nonUserPermNameA, $nonUserPermNameB))
             ->andReturn(false);
 
         /*
@@ -584,16 +573,16 @@ class HasRoleTest extends PHPUnit_Framework_TestCase
         |------------------------------------------------------------
         */
         $user->shouldReceive('hasRole')
-            ->with(m::anyOf('UserRoleA', 'UserRoleB'), m::anyOf(true, false))
+            ->with(m::anyOf('UserRoleA', 'UserRoleB'))
             ->andReturn(true);
         $user->shouldReceive('hasRole')
-            ->with('NonUserRoleB', m::anyOf(true, false))
+            ->with('NonUserRoleB')
             ->andReturn(false);
         $user->shouldReceive('can')
-            ->with(m::anyOf('user_can_a', 'user_can_b', 'user_can_c'), m::anyOf(true, false))
+            ->with(m::anyOf('user_can_a', 'user_can_b', 'user_can_c'))
             ->andReturn(true);
         $user->shouldReceive('can')
-            ->with('user_cannot_b', m::anyOf(true, false))
+            ->with('user_cannot_b')
             ->andReturn(false);
 
         /*
@@ -651,16 +640,16 @@ class HasRoleTest extends PHPUnit_Framework_TestCase
         |------------------------------------------------------------
         */
         $user->shouldReceive('hasRole')
-            ->with(m::anyOf($userRoleNameA, $userRoleNameB), m::anyOf(true, false))
+            ->with(m::anyOf($userRoleNameA, $userRoleNameB))
             ->andReturn(true);
         $user->shouldReceive('hasRole')
-            ->with(m::anyOf($nonUserRoleNameA, $nonUserRoleNameB), m::anyOf(true, false))
+            ->with(m::anyOf($nonUserRoleNameA, $nonUserRoleNameB))
             ->andReturn(false);
         $user->shouldReceive('can')
-            ->with(m::anyOf($userPermNameA, $userPermNameB, $userPermNameC), m::anyOf(true, false))
+            ->with(m::anyOf($userPermNameA, $userPermNameB, $userPermNameC))
             ->andReturn(true);
         $user->shouldReceive('can')
-            ->with(m::anyOf($nonUserPermNameA, $nonUserPermNameB), m::anyOf(true, false))
+            ->with(m::anyOf($nonUserPermNameA, $nonUserPermNameB))
             ->andReturn(false);
 
         /*
