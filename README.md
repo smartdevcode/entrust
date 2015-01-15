@@ -2,112 +2,73 @@
 
 Entrust is a succinct and flexible way to add Role-based Permissions to **Laravel4**.
 
-First and foremost I must give credit to the original developers of this package.
-Andrew Elkins (@andrewelkins) and Leroy Merlin (@zizaco) did excellent work on the fundamental design and functionality.
-My fork is intended to:
+First and foremost I must give credit to the original developers of this package. Andrew Elkins (@andrewelkins) and Leroy Merlin (@zizaco) did excellent work on the fundamental design and functionality. My fork is intended to:
+
 - Remove extra components not really relevant to role & permission management (in particular, Ardent).
 - Add extra functionality I felt was useful and particularly suited to this package.
 - Make integrating the package more flexible and dynamic (eventually).
 
-Were my changes ever to be integrated back into the Zizaco version of this plugin, I think that would be lovely.
-Either way though, I hope to demonstrate some genuinely helpful features and options.
-
-## Contents
-
-- [Quick start](#quick-start)
-    - [Required setup](#required-setup)
-- [Configuration](#configuration)
-    - [User relation to roles](#user-relation-to-roles)
-    - [Models](#models)
-        - [Role](#role)
-        - [Permission](#permission)
-        - [User](#user)
-- [Usage](#usage)
-    - [Concepts](#concepts)
-        - [Checking for Roles & Permissions](#checking-for-roles--permissions)
-        - [User ability](#user-ability)
-    - [Short syntax route filter](#short-syntax-route-filter)
-    - [Route filter](#route-filter)
-- [Troubleshooting](#troubleshooting)
-- [License](#license)
-- [Additional information](#additional-information)
+Were my changes ever to be integrated back into the Zizaco version of this plugin, I think that would be lovely. Either way though, I hope to demonstrate some genuinely helpful features and options.
 
 ## Quick start
 
-**PS:** Even though it's not needed, Entrust works very well with [Confide](https://github.com/Zizaco/confide) in order to eliminate repetitive tasks involving the management of users: account creation, login, logout, confirmation by e-mail, password reset, etc.
+**PS:** Even though it's not needed. Entrust works very well with [Confide](https://github.com/Zizaco/confide) in order to eliminate repetitive tasks involving the management of users: account creation, login, logout, confirmation by e-mail, password reset, etc.
 
-[Take a look at Confide](https://github.com/Zizaco/confide).
+[Take a look at Confide](https://github.com/Zizaco/confide)
 
 ### Required setup
 
-In the `require` key of `composer.json` file add the following:
+In the `require` key of `composer.json` file add the following
 
-```json
-"bbatsche/entrust": "~2.0"
-```
+    "bbatsche/entrust": "~2.0"
 
-Run the Composer update command:
+Run the Composer update command
 
-```bash
-composer update
-```
+    $ composer update
 
-In your `config/app.php` add `'Bbatsche\Entrust\EntrustServiceProvider'` to the end of the `$providers` array:
+In your `config/app.php` add `'Bbatsche\Entrust\EntrustServiceProvider'` to the end of the `$providers` array
 
 ```php
 'providers' => array(
+
     'Illuminate\Foundation\Providers\ArtisanServiceProvider',
     'Illuminate\Auth\AuthServiceProvider',
     ...
     'Bbatsche\Entrust\EntrustServiceProvider',
+
 ),
 ```
 
-At the end of `config/app.php` add `'Entrust' => 'Bbatsche\Entrust\EntrustFacade'` to the `$aliases` array:
+At the end of `config/app.php` add `'Entrust' => 'Bbatsche\Entrust\EntrustFacade'` to the `$aliases` array
 
 ```php
 'aliases' => array(
+
     'App'        => 'Illuminate\Support\Facades\App',
     'Artisan'    => 'Illuminate\Support\Facades\Artisan',
     ...
     'Entrust'    => 'Bbatsche\Entrust\EntrustFacade',
+
 ),
 ```
 
 ## Configuration
 
-Set the property values in the `config/auth.php`.
-These values will be used by entrust to refer to the correct user table and model.
-
-You can also publish the configuration for this package to further customize table names and model namespaces:
-
-```bash
-php artisan config:publish bbatsche/entrust
-```
+Set the property values in the `config/auth.php`. These values will be used by entrust to refer to the correct user table and model.
 
 ### User relation to roles
 
-Now generate the Entrust migration:
+Now generate the Entrust migration
 
-```bash
-php artisan entrust:migration
-```
+    $ php artisan entrust:migration
 
-It will generate the `<timestamp>_entrust_setup_tables.php` migration.
-You may now run it with the artisan migrate command:
+It will generate the `<timestamp>_entrust_setup_tables.php` migration. You may now run it with the artisan migrate command:
 
-```bash
-php artisan migrate
-```
+    $ php artisan migrate
 
-After the migration, four new tables will be present:
-- `roles` which stores roles.
-- `permissions` for storing permissions
-- `role_user` & `permission_role` which will represent the [Many-to-Many](http://laravel.com/docs/4.2/eloquent#many-to-many) relationship between `User`, `Role`, and `Permission`.
+After the migration, four new tables will be present: `roles` which stores roles, `permissions` for storing permissions, and `role_user` & `permission_role` which will represent the [Many-to-Many](http://laravel.com/docs/4.2/eloquent#many-to-many) relations between `User`, `Role`, and `Permission`.
 
 ### Models
-
-#### Role
 
 Create a Role model inside `app/models/Role.php` using the following example:
 
@@ -118,17 +79,16 @@ use Bbatsche\Entrust\EntrustRole;
 
 class Role extends EntrustRole
 {
+
 }
 ```
 
-The `Role` model has three main attributes:
-- `name`: the name of the Role, the unique key used to represent the Role in your application. For example: "admin", "owner", "employee".
-- `display_name`: the human readable name for that role, it is not unique and may be used for display purposes. For example: "User Administrator", "Project Owner", "Widget  Co. Employee".
-- `description`: a longer form description of the role.
-
-Both `display_name` and `description` are optional; their fields are nullable in the database.
-
-#### Permission
+The `Role` model has three main attributes: `name`, `display_name`, and `description`. `name`, as you can imagine, is
+the name of the Role. It is the unique key used to represent the Role in your application. For example: "admin",
+"owner", "employee". `display_name` is a human readable name for that role. It is not unique and may be used
+for display purposes. For example: "User Administrator", "Project Owner", "Widget  Co. Employee". `description` can be
+used for a longer form description of the role. Both `display_name` and `description` are optional; their fields are
+nullable in the database.
 
 Create a Permission model inside `app/models/Permission.php` using the following example:
 
@@ -139,17 +99,17 @@ use Bbatsche\Entrust\EntrustPermission;
 
 class Permission extends EntrustPermission
 {
+
 }
 ```
 
-The `Permission` model has the same three attributes as the `Role`:
-- `name`: the name of the Permission, the unique key used to represent the Permission in your application. For example: "create-post", "edit-user", "post-payment", "mailing-list-subscribe".
-- `display_name`: the viewer friendly version of the permission string. For example "Create Posts", "Edit Users", "Post Payments", "Subscribe to mailing list".
-- `description` Description can be a more detailed explanation for the Permission. In general, it may be helpful to think of the attributes in the form of a sentence: "The permission `display_name` allows a user to `description`."
-
-These three fields have the same general purpose as for your Roles, but instead applied to the Permission model.
-
-#### User
+The `Permission` model has the same three attributes as the `Role`: `name`, `display_name`, and `description`. These
+three fields have the same general purpose as for your Roles, but instead applied to the Permission model.
+`name` is the unique name of the Permission. For example: "create-post", "edit-user", "post-payment",
+"mailing-list-subscribe". `display_name` is a viewer friendly version of the permission string. For example "Create
+Posts", "Edit Users", "Post Payments", "Subscribe to mailing list". Description can be a more detailed explanation for
+the Permission. In general, it may be helpful to think of the attributes in the form of a sentence: "The permission
+`display_name` allows a user to `description`."
 
 Next, use the `HasRole` trait in your existing `User` model. For example:
 
@@ -160,19 +120,18 @@ use Bbatsche\Entrust\HasRole;
 
 class User extends Eloquent
 {
-    use HasRole; // add this trait to your user model
+    use HasRole; // Add this trait to your user model
 
     ...
 }
 ```
 
-This will enable the relation with `Role` and add the following methods `roles()`, `hasRole($name)`, `can($permission)`, and `ability($roles, $permissions, $options)` within your `User` model.
+This will enable the relation with `Role` and add the following methods `roles()`, `hasRole($name)`,
+`can($permission)`, and `ability($roles, $permissions, $options)` within your `User` model.
 
 Don't forget to dump composer autoload
 
-```bash
-composer dump-autoload
-```
+    $ composer dump-autoload
 
 **And you are ready to go.**
 
@@ -191,24 +150,22 @@ $owner->save();
 $admin = new Role();
 $admin->name         = 'admin';
 $admin->display_name = 'User Administrator'; // optional
-$admin->description  = 'User is allowed to manage and edit other users'; // optional
+$admin->description  = 'User is allowed to manage and edit other users'; //optional
 $admin->save();
 ```
 
-Next, with both roles created let's assign them to the users.
-Thanks to the `HasRole` trait this is as easy as:
+Next, with both roles created let's assign them to the users. Thanks to the `HasRole` trait this is as easy as:
 
 ```php
 $user = User::where('username', '=', 'bbatsche')->first();
 
-// role attach alias
-$user->attachRole($admin); // parameter can be an Role object, array, or id
+/* role attach alias */
+$user->attachRole($admin); // Parameter can be an Role object, array or id.
 
-// or eloquent's original technique
+/* OR the eloquent's original: */
 $user->roles()->attach($admin->id); // id only
 ```
-
-Now we just need to add permissions to those Roles:
+Now we just need to add permissions to those Roles.
 
 ```php
 $createPost = new Permission();
@@ -226,10 +183,10 @@ $editUser->description  = 'edit existing users'; // optional
 $editUser->save();
 
 $admin->attachPermission($createPost);
-// equivalent to $admin->perms()->sync(array($createPost->id));
+// Equivalent to $admin->perms()->sync(array($createPost->id));
 
 $owner->attachPermissions(array($createPost, $editUser));
-// equivalent to $owner->perms()->sync(array($createPost->id, $editUser->id));
+// Equivalent to $owner->perms()->sync(array($createPost->id, $editUser->id));
 ```
 
 #### Checking for Roles & Permissions
@@ -243,58 +200,54 @@ $user->can('edit-user');   // false
 $user->can('create-post'); // true
 ```
 
-Both `hasRole()` and `can()` can receive an array of roles & permissions to check:
+Both `hasRole()` and `can()` can receive an array of roles & permissions to check.
 
 ```php
 $user->hasRole(['owner', 'admin']);       // true
 $user->can(['edit-user', 'create-post']); // true
 ```
 
-By default, if any of the roles or permissions are present for a user then the method will return true.
-Passing `true` as a second parameter instructs the method to require **all** of the items:
+By default, if any of the roles or permissions are present for a user then the method will return true. Passing `true` as a second parameter instructs the method to require **all** of the items.
 
 ```php
 $user->hasRole(['owner', 'admin']);             // true
-$user->hasRole(['owner', 'admin'], true);       // false, user does not have admin role
+$user->hasRole(['owner', 'admin'], true);       // false; user does not have admin role
 $user->can(['edit-user', 'create-post']);       // true
-$user->can(['edit-user', 'create-post'], true); // false, user does not have edit-user permission
+$user->can(['edit-user', 'create-post'], true); // false; user does not have edit-user permission
 ```
 
 You can have as many `Role`s as you want for each `User` and vice versa.
 
-The `Entrust` class has shortcuts to both `can()` and `hasRole()` for the currently logged in user:
+The `Entrust` class has shortcuts to both `can()` and `hasRole()` for the currently logged in user. The following example:
 
 ```php
 Entrust::hasRole('role-name');
 Entrust::can('permission-name');
+```
 
-// is identical to
+would be identical to:
 
+```php
 Auth::user()->hasRole('role-name');
 Auth::user()->can('permission-name);
 ```
 
-#### User ability
+#### User Ability
 
-More advanced checking can be done using the awesome `ability` function.
-It takes in three parameters (roles, permissions, options):
-- `roles` is a set of roles to check.
-- `permissions` is a set of permissions to check.
-
-Either of the roles or permissions variable can be a comma separated string or array:
+More advanced checking can be done using the awesome `ability` function. It takes in three parameters (roles,
+permissions, options). `roles` is a set of roles to check. `permissions` is a set of permissions to check.
+Either of the roles or permissions variable can be a comma separated string or array.
 
 ```php
 $user->ability(array('admin', 'owner'), array('create-post', 'edit-user'));
-
-// or
-
+//or
 $user->ability('admin,owner', 'create-post,edit-user');
 ```
 
-This will check whether the user has any of the provided roles and permissions.
-In this case it will return true since the user is an `admin` and has the `create-post` permission.
+This will check whether the user has any of the provided roles and permissions. In this case it will return true
+since the user is an `admin` and has the `create-post` permission.
 
-The third parameter is an options array:
+The third parameter is an options array.
 
 ```php
 $options = array(
@@ -303,74 +256,73 @@ $options = array(
 );
 ```
 
-- `validate_all` is a boolean flag to set whether to check all the values for true, or to return true if at least one role or permission is matched.
+- `validate_all` is a boolean flag to set whether to check all the values for true, or to return true if at least one
+  role or permission is matched.
 - `return_type` specifies whether to return a boolean, array of checked values, or both in an array.
 
-Here is an example output:
+Here's some example output.
 
 ```php
 $options = array(
     'validate_all' => true,
     'return_type' => 'both'
 );
+list($validate, $allValidations) = $user->ability(array('admin', 'owner'), array('create-post', 'edit-user'), $options);
 
-list($validate, $allValidations) = $user->ability(
-    array('admin', 'owner'),
-    array('create-post', 'edit-user'),
-    $options
-);
-
+// Output
 var_dump($validate);
-// bool(false)
-
+bool(false)
 var_dump($allValidations);
-// array(4) {
-//     ['role'] => bool(true)
-//     ['role_2'] => bool(false)
-//     ['create-post'] => bool(true)
-//     ['edit-user'] => bool(false)
-// }
+array(4) {
+  ['role']=>
+  bool(true)
+  ['role_2']=>
+  bool(false)
+  ['create-post']=>
+  bool(true)
+  ['edit-user']=>
+  bool(false)
+}
 ```
 
-### Short syntax route filter
+### Short Syntax Route Filter
 
 To filter a route by permission or role you can call the following in your `app/filters.php`:
 
 ```php
-// only users with roles that have the 'manage_posts' permission will be able to access any route within admin/post
+// Only users with roles that have the 'manage_posts' permission will
+// be able to access any route within admin/post.
 Entrust::routeNeedsPermission('admin/post*', 'create-post');
 
-// only owners will have access to routes within admin/advanced
+// Only owners will have access to routes within admin/advanced
 Entrust::routeNeedsRole('admin/advanced*', 'owner');
 
-// optionally the second parameter can be an array of permissions or roles
-// user would need to match all roles or permissions for that route
+// Optionally the second parameter can be an array of permissions or roles.
+// User would need to match all roles or permissions for that route.
 Entrust::routeNeedsPermission('admin/post*', array('create-post', 'edit-comment'));
+
 Entrust::routeNeedsRole('admin/advanced*', array('owner','writer'));
 ```
 
-Both of these methods accept a third parameter.
-If the third parameter is null then the return of a prohibited access will be `App::abort(403)`, otherwise the third parameter will be returned.
-So you can use it like:
+Both of these methods accept a third parameter. If the third parameter is null then the return of a prohibited access will be `App::abort(403)`. Otherwise the third parameter will be returned. So you can use it like:
 
 ```php
 Entrust::routeNeedsRole('admin/advanced*', 'owner', Redirect::to('/home'));
 ```
 
-Furthermore both of these methods accept a fourth parameter.
-It defaults to true and checks all roles/permissions given.
-If you set it to false, the function will only fail if all roles/permissions fail for that user.
-Useful for admin applications where you want to allow access for multiple groups.
+Further more both of these methods accept a fourth parameter. It defaults to true and checks all roles/permissions
+given. If you set it to false, the function will only fail if all roles/permissions fail for that user. Useful for
+admin applications where you want to allow access for multiple groups.
 
 ```php
-// if a user has 'create-post', 'edit-comment', or both they will have access
+// If a user has `create-post`, `edit-comment` or both they will have access.
 Entrust::routeNeedsPermission('admin/post*', array('create-post', 'edit-comment'), null, false);
 
-// if a user is a member of 'owner', 'writer', or both they will have access
+// If a user is a member of `owner`, `writer` or both they will have access.
 Entrust::routeNeedsRole('admin/advanced*', array('owner','writer'), null, false);
 
-// if a user is a member of 'owner', 'writer', or both, or user has 'create-post', 'edit-comment' they will have access
-// if the 4th parameter is true then the user must be a member of Role and must have Permission
+// If a user is a member of `owner`, `writer` or both, or user has `create-post`, `edit-comment` they will have access.
+// You can set the 4th parameter to true then user must be member of Role and must has Permission.
 Entrust::routeNeedsRoleOrPermission(
     'admin/advanced*',
     array('owner', 'writer'),
@@ -382,18 +334,19 @@ Entrust::routeNeedsRoleOrPermission(
 
 ### Route filter
 
-Entrust roles/permissions can be used in filters by simply using the `can` and `hasRole` methods from within the Facade:
+Entrust roles/permissions can be used in filters by simply using the `can` and `hasRole` methods from within the Facade.
 
 ```php
 Route::filter('manage_posts', function()
 {
-    // check the current user
+    // Checks the current user
     if (!Entrust::can('create-post')) {
         return Redirect::to('admin');
     }
 });
 
-// only users with roles that have the 'manage_posts' permission will be able to access any admin/post route
+// Only users with roles that have the 'manage_posts' permission will
+// be able to access any admin/post route.
 Route::when('admin/post*', 'manage_posts');
 ```
 
@@ -402,18 +355,18 @@ Using a filter to check for a role:
 ```php
 Route::filter('owner_role', function()
 {
-    // check the current user
+    // Checks the current user
     if (!Entrust::hasRole('Owner')) {
         App::abort(403);
     }
 });
 
-// only owners will have access to routes within admin/advanced
+// Only owners will have access to routes within admin/advanced
 Route::when('admin/advanced*', 'owner_role');
 ```
 
-As you can see `Entrust::hasRole()` and `Entrust::can()` checks if the user is logged in, and then if he or she has the role or permission.
-If the user is not logged the return will also be `false`.
+As you can see `Entrust::hasRole()` and `Entrust::can()` checks if the user is logged in, and then if he or she has the
+role or permission. If the user is not logged the return will also be `false`.
 
 ## Troubleshooting
 
@@ -425,17 +378,17 @@ SQLSTATE[HY000]: General error: 1005 Can't create table 'laravelbootstrapstarter
     references `users` (`id`)) (Bindings: array ())
 ```
 
-Then it's likely that the `id` column in your user table does not match the `user_id` column in `role_user`.
-Match sure both are `INT(10)`.
+Then it's likely that the `id` column in your user table does not match the `user_id` column in `role_user`. Match sure
+both are `INT(10)`.
 
 ## License
 
-Entrust is free software distributed under the terms of the MIT license.
+Entrust is free software distributed under the terms of the MIT license
 
 ## Additional information
 
 Current library documentation can be found on [GitHub Pages](http://bbatsche.github.io/entrust/docs/2.0.0).
 
-Any questions, feel free to contact me or ask [here](http://laravel.io/forum/09-23-2014-package-zizaco-entrust).
+Any questions, feel free to contact me or ask [here](http://laravel.io/forum/09-23-2014-package-zizaco-entrust)
 
-Any issues, please [report here](https://github.com/bbatsche/entrust/issues).
+Any issues, please [report here](https://github.com/bbatsche/entrust/issues)
