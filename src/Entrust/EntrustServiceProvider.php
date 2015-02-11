@@ -1,13 +1,5 @@
 <?php namespace Zizaco\Entrust;
 
-/**
- * This file is part of Entrust,
- * a role & permission management solution for Laravel.
- *
- * @license MIT
- * @package Zizaco\Entrust
- */
-
 use Illuminate\Support\ServiceProvider;
 
 class EntrustServiceProvider extends ServiceProvider
@@ -26,12 +18,8 @@ class EntrustServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        // Publish config files
-        $this->publishes([
-            __DIR__.'/../config/config.php' => config_path('entrust.php'),
-        ]);
+        $this->package('zizaco/entrust', 'entrust', __DIR__.'/../');
 
-        // Register commands
         $this->commands('command.entrust.migration');
     }
 
@@ -45,8 +33,6 @@ class EntrustServiceProvider extends ServiceProvider
         $this->registerEntrust();
 
         $this->registerCommands();
-
-        $this->mergeConfig();
     }
 
     /**
@@ -56,33 +42,21 @@ class EntrustServiceProvider extends ServiceProvider
      */
     private function registerEntrust()
     {
-        $this->app->bind('entrust', function ($app) {
+	$this->app->bind('entrust', function ($app) {
             return new Entrust($app);
         });
     }
 
-    /**
-     * Register the artisan commands.
-     *
-     * @return void
-     */
-    private function registerCommands()
-    {
+	/**
+	 * Register the artisan commands.
+	 *
+	 * @return void
+	 */
+	private function registerCommands()
+	{
         $this->app->bindShared('command.entrust.migration', function ($app) {
             return new MigrationCommand();
         });
-    }
-
-    /**
-     * Merges user's and entrust's configs.
-     *
-     * @return void
-     */
-    private function mergeConfig()
-    {
-        $this->mergeConfigFrom(
-            __DIR__.'/../config/config.php', 'entrust'
-        );
     }
 
     /**
