@@ -1,16 +1,6 @@
 <?php namespace Zizaco\Entrust;
 
-/**
- * This file is part of Entrust,
- * a role & permission management solution for Laravel.
- *
- * @license MIT
- * @package Zizaco\Entrust
- */
-
-use Illuminate\Support\Facades\Facade;
-
-class EntrustFacade extends Facade
+class EntrustFacade extends \Illuminate\Support\Facades\Facade
 {
     /**
      * Get the registered name of the component.

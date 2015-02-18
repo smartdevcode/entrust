@@ -1,17 +1,9 @@
-<?php namespace Zizaco\Entrust\Traits;
-
-/**
- * This file is part of Entrust,
- * a role & permission management solution for Laravel.
- *
- * @license MIT
- * @package Zizaco\Entrust
- */
+<?php namespace Zizaco\Entrust;
 
 use Illuminate\Support\Facades\Config;
-use InvalidArgumentException;
+use Symfony\Component\Process\Exception\InvalidArgumentException;
 
-trait EntrustUserTrait
+trait HasRole
 {
     /**
      * Many-to-Many relations with Role.
@@ -20,59 +12,21 @@ trait EntrustUserTrait
      */
     public function roles()
     {
-        return $this->belongsToMany(Config::get('entrust.role'), Config::get('entrust.role_user_table'), 'user_id', 'role_id');
+        return $this->belongsToMany(Config::get('entrust::role'), Config::get('entrust::assigned_roles_table'), 'user_id', 'role_id');
     }
 
     /**
-     * Boot the user model
-     * Attach event listener to remove the many-to-many records when trying to delete
-     * Will NOT delete any records if the user model uses soft deletes.
+     * Checks if the user has a Role by its name.
      *
-     * @return void|bool
-     */
-    public static function boot()
-    {
-        parent::boot();
-
-        static::deleting(function($user) {
-            if (!method_exists(Config::get('auth.model'), 'bootSoftDeletingTrait')) {
-                $user->roles()->sync([]);
-            }
-
-            return true;
-        });
-    }
-
-    /**
-     * Checks if the user has a role by its name.
-     *
-     * @param string|array $name       Role name or array of role names.
-     * @param bool         $requireAll All roles in the array are required.
+     * @param string $name Role name.
      *
      * @return bool
      */
-    public function hasRole($name, $requireAll = false)
+    public function hasRole($name)
     {
-        if (is_array($name)) {
-            foreach ($name as $roleName) {
-                $hasRole = $this->hasRole($roleName);
-
-                if ($hasRole && !$requireAll) {
-                    return true;
-                } elseif (!$hasRole && $requireAll) {
-                    return false;
-                }
-            }
-
-            // If we've made it this far and $requireAll is FALSE, then NONE of the roles were found
-            // If we've made it this far and $requireAll is TRUE, then ALL of the roles were found.
-            // Return the value of $requireAll;
-            return $requireAll;
-        } else {
-            foreach ($this->roles as $role) {
-                if ($role->name == $name) {
-                    return true;
-                }
+        foreach ($this->roles as $role) {
+            if ($role->name == $name) {
+                return true;
             }
         }
 
@@ -82,35 +36,22 @@ trait EntrustUserTrait
     /**
      * Check if user has a permission by its name.
      *
-     * @param string|array $permission Permission string or array of permissions.
-     * @param bool         $requireAll All permissions in the array are required.
+     * @param string $permission Permission string.
      *
      * @return bool
      */
-    public function can($permission, $requireAll = false)
+    public function can($permission)
     {
-        if (is_array($permission)) {
-            foreach ($permission as $permName) {
-                $hasPerm = $this->can($permName);
-
-                if ($hasPerm && !$requireAll) {
-                    return true;
-                } elseif (!$hasPerm && $requireAll) {
-                    return false;
-                }
+        foreach ($this->roles as $role) {
+            // Deprecated permission value within the role table.
+            if (is_array($role->permissions) && in_array($permission, $role->permissions) ) {
+                return true;
             }
 
-            // If we've made it this far and $requireAll is FALSE, then NONE of the perms were found
-            // If we've made it this far and $requireAll is TRUE, then ALL of the perms were found.
-            // Return the value of $requireAll;
-            return $requireAll;
-        } else {
-            foreach ($this->roles as $role) {
-                // Validate against the Permission table
-                foreach ($role->perms as $perm) {
-                    if ($perm->name == $permission) {
-                        return true;
-                    }
+            // Validate against the Permission table
+            foreach ($role->perms as $perm) {
+                if ($perm->name == $permission) {
+                    return true;
                 }
             }
         }
@@ -143,7 +84,7 @@ trait EntrustUserTrait
         if (!isset($options['validate_all'])) {
             $options['validate_all'] = false;
         } else {
-            if ($options['validate_all'] !== true && $options['validate_all'] !== false) {
+            if ($options['validate_all'] != true && $options['validate_all'] != false) {
                 throw new InvalidArgumentException();
             }
         }
@@ -192,24 +133,26 @@ trait EntrustUserTrait
      * Alias to eloquent many-to-many relation's attach() method.
      *
      * @param mixed $role
+     *
+     * @return void
      */
     public function attachRole($role)
     {
-        if(is_object($role)) {
+        if( is_object($role))
             $role = $role->getKey();
-        }
 
-        if(is_array($role)) {
+        if( is_array($role))
             $role = $role['id'];
-        }
 
-        $this->roles()->attach($role);
+        $this->roles()->attach( $role );
     }
 
     /**
      * Alias to eloquent many-to-many relation's detach() method.
      *
      * @param mixed $role
+     *
+     * @return void
      */
     public function detachRole($role)
     {
@@ -228,6 +171,8 @@ trait EntrustUserTrait
      * Attach multiple roles to a user
      *
      * @param mixed $roles
+     *
+     * @return void
      */
     public function attachRoles($roles)
     {
@@ -240,6 +185,8 @@ trait EntrustUserTrait
      * Detach multiple roles from a user
      *
      * @param mixed $roles
+     *
+     * @return void
      */
     public function detachRoles($roles)
     {
@@ -247,5 +194,4 @@ trait EntrustUserTrait
             $this->detachRole($role);
         }
     }
-
 }
