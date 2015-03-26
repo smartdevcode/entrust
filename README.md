@@ -8,8 +8,7 @@
 
 Entrust is a succinct and flexible way to add Role-based Permissions to **Laravel 5**.
 
-If you are looking for the Laravel 4 version, take a look [Branch 1.0](https://github.com/Zizaco/entrust/tree/1.0). It
-contains the latest entrust version for Laravel 4.
+If you are looking for the Laravel 4 version, take a look [Release 1.3.x](https://github.com/Zizaco/entrust/tree/1.3.0) release tree.
 
 ## Contents
 
@@ -44,7 +43,7 @@ Then in your `config/app.php` add
 
     'Zizaco\Entrust\EntrustServiceProvider'
     
-in the providers array and
+in the `providers` array and
 
     'Entrust' => 'Zizaco\Entrust\EntrustFacade'
     
