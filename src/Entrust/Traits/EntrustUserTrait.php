@@ -20,7 +20,7 @@ trait EntrustUserTrait
      */
     public function roles()
     {
-        return $this->belongsToMany(Config::get('entrust.role'), Config::get('entrust.role_user_table'), 'user_id', 'role_id');
+        return $this->belongsToMany(Config::get('entrust.role'), Config::get('entrust.role_user_table'), Config::get('entrust.user_foreign_key'), 'role_id');
     }
 
     /**
@@ -129,7 +129,7 @@ trait EntrustUserTrait
      *
      * @return array|bool
      */
-    public function ability($roles, $permissions, $options = [])
+    public function ability($roles, $permissions, $options = array())
     {
         // Convert string to array if that's what is passed in.
         if (!is_array($roles)) {
@@ -158,8 +158,8 @@ trait EntrustUserTrait
         }
 
         // Loop through roles and permissions and check each.
-        $checkedRoles = [];
-        $checkedPermissions = [];
+        $checkedRoles = array();
+        $checkedPermissions = array();
         foreach ($roles as $role) {
             $checkedRoles[$role] = $this->hasRole($role);
         }
@@ -181,9 +181,9 @@ trait EntrustUserTrait
         if ($options['return_type'] == 'boolean') {
             return $validateAll;
         } elseif ($options['return_type'] == 'array') {
-            return ['roles' => $checkedRoles, 'permissions' => $checkedPermissions];
+            return array('roles' => $checkedRoles, 'permissions' => $checkedPermissions);
         } else {
-            return [$validateAll, ['roles' => $checkedRoles, 'permissions' => $checkedPermissions]];
+            return array($validateAll, array('roles' => $checkedRoles, 'permissions' => $checkedPermissions));
         }
 
     }
