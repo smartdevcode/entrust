@@ -59,8 +59,6 @@ class EntrustServiceProvider extends ServiceProvider
         $this->app->bind('entrust', function ($app) {
             return new Entrust($app);
         });
-        
-        $this->app->alias('entrust', 'Zizaco\Entrust\Entrust');
     }
 
     /**
