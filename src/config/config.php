@@ -8,7 +8,7 @@
  * @package Zizaco\Entrust
  */
 
-return [
+return array(
 
     /*
     |--------------------------------------------------------------------------
@@ -82,4 +82,4 @@ return [
     */
     'user_foreign_key' => 'user_id',
 
-];
+);
