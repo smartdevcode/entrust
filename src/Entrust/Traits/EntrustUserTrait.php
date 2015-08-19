@@ -108,7 +108,7 @@ trait EntrustUserTrait
             foreach ($this->roles as $role) {
                 // Validate against the Permission table
                 foreach ($role->perms as $perm) {
-                    if (str_is( $permission, $perm->name) ) {
+                    if ($perm->name == $permission) {
                         return true;
                     }
                 }
