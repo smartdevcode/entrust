@@ -241,10 +241,8 @@ trait EntrustUserTrait
      *
      * @param mixed $roles
      */
-    public function detachRoles($roles=null)
+    public function detachRoles($roles)
     {
-        if (!$roles) $roles = $this->roles()->get();
-        
         foreach ($roles as $role) {
             $this->detachRole($role);
         }
