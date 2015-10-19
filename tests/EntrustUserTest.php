@@ -116,6 +116,40 @@ class EntrustUserTest extends PHPUnit_Framework_TestCase
         $this->assertFalse($user->can(['manage_d', 'manage_e']));
     }
 
+
+    public function testCanWithPlaceholderSupport ()
+    {
+        /*
+        |------------------------------------------------------------
+        | Set
+        |------------------------------------------------------------
+        */
+        $permA = $this->mockPermission('admin.posts');
+        $permB = $this->mockPermission('admin.pages');
+        $permC = $this->mockPermission('admin.users');
+
+        $role = $this->mockRole('Role');
+
+        $role->perms = [$permA, $permB, $permC];
+
+        $user = new HasRoleUser();
+        $user->roles = [$role];
+
+        /*
+        |------------------------------------------------------------
+        | Assertion
+        |------------------------------------------------------------
+        */
+        $this->assertTrue($user->can('admin.posts'));
+        $this->assertTrue($user->can('admin.pages'));
+        $this->assertTrue($user->can('admin.users'));
+        $this->assertFalse($user->can('admin.config'));
+
+        $this->assertTrue($user->can(['admin.*']));
+        $this->assertFalse($user->can(['site.*']));
+    }
+    
+    
     public function testAbilityShouldReturnBoolean()
     {
         /*
@@ -926,6 +960,43 @@ class EntrustUserTest extends PHPUnit_Framework_TestCase
         |------------------------------------------------------------
         */
         $user->detachRoles([1, 2, 3]);
+    }
+
+    public function testDetachAllRoles()
+    {
+        /*
+        |------------------------------------------------------------
+        | Set
+        |------------------------------------------------------------
+        */
+        $roleA = $this->mockRole('RoleA');
+        $roleB = $this->mockRole('RoleB');
+
+        $user = m::mock('HasRoleUser')->makePartial();
+        $user->roles = [$roleA, $roleB];
+
+        $relationship = m::mock('BelongsToMany');
+
+        /*
+        |------------------------------------------------------------
+        | Expectation
+        |------------------------------------------------------------
+        */
+        $relationship->shouldReceive('get')
+                     ->andReturn($user->roles)->once();
+
+        $user->shouldReceive('belongsToMany')
+                    ->andReturn($relationship)->once();
+
+        $user->shouldReceive('detachRole')->twice();
+
+        /*
+        |------------------------------------------------------------
+        | Assertion
+        |------------------------------------------------------------
+        */
+        $user->detachRoles();
+
     }
 
     protected function mockPermission($permName)
