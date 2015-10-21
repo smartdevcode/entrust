@@ -34,16 +34,12 @@
     },
     "autoload": {
         "classmap": [
-            "src/commands"
+            "src/commands",
+            "tests/Middleware/MiddlewareTest.php"
         ],
         "psr-4": {
             "Zizaco\\Entrust\\": "src/Entrust/"
         }
-    },
-    "autoload-dev": {
-        "classmap": [
-            "tests/Middleware/MiddlewareTest.php"
-        ]
     },
     "minimum-stability": "dev"
 }
