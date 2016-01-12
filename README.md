@@ -46,19 +46,19 @@ to your composer.json. Then run `composer install` or `composer update`.
 
 Then in your `config/app.php` add
 ```php
-    'Zizaco\Entrust\EntrustServiceProvider'
+    Zizaco\Entrust\EntrustServiceProvider::class
 ```
 in the `providers` array and
 ```php
-    'Entrust' => 'Zizaco\Entrust\EntrustFacade'
+    'Entrust' => Zizaco\Entrust\EntrustFacade::class
 ```
 to the `aliases` array.
 
 If you are going to use [Middleware](#middleware) (requires Laravel 5.1 or later) you also need to add
 ```php
-    'role' => 'Zizaco\Entrust\Middleware\EntrustRole',
-    'permission' => 'Zizaco\Entrust\Middleware\EntrustPermission',
-    'ability' => 'Zizaco\Entrust\Middleware\EntrustAbility',
+    'role' => Zizaco\Entrust\Middleware\EntrustRole::class,
+    'permission' => Zizaco\Entrust\Middleware\EntrustPermission::class,
+    'ability' => Zizaco\Entrust\Middleware\EntrustAbility::class,
 ```
 to `routeMiddleware` array in `app/Http/Kernel.php`.
 
@@ -497,7 +497,7 @@ SQLSTATE[HY000]: General error: 1005 Can't create table 'laravelbootstrapstarter
 ```
 
 Then it's likely that the `id` column in your user table does not match the `user_id` column in `role_user`.
-Match sure both are `INT(10)`.
+Make sure both are `INT(10)`.
 
 When trying to use the EntrustUserTrait methods, you encounter the error which looks like
 
