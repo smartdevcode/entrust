@@ -3,7 +3,6 @@
 [![Build Status](https://travis-ci.org/Zizaco/entrust.svg)](https://travis-ci.org/Zizaco/entrust)
 [![Version](https://img.shields.io/packagist/v/Zizaco/entrust.svg)](https://packagist.org/packages/zizaco/entrust)
 [![License](https://poser.pugx.org/zizaco/entrust/license.svg)](https://packagist.org/packages/zizaco/entrust)
-[![ProjectStatus](http://stillmaintained.com/Zizaco/entrust.png)](http://stillmaintained.com/Zizaco/entrust)
 [![Total Downloads](https://img.shields.io/packagist/dt/zizaco/entrust.svg)](https://packagist.org/packages/zizaco/entrust)
 
 [![SensioLabsInsight](https://insight.sensiolabs.com/projects/cc4af966-809b-4fbc-b8b2-bb2850e6711e/small.png)](https://insight.sensiolabs.com/projects/cc4af966-809b-4fbc-b8b2-bb2850e6711e)
@@ -40,17 +39,17 @@ contains the latest entrust version for Laravel 4.
 
 In order to install Laravel 5 Entrust, just add
 
-    "zizaco/entrust": "dev-laravel-5"
+    "zizaco/entrust": "5.2.x-dev"
 
 to your composer.json. Then run `composer install` or `composer update`.
 
 Then in your `config/app.php` add
 ```php
-    'Zizaco\Entrust\EntrustServiceProvider'
+    Zizaco\Entrust\EntrustServiceProvider::class,
 ```
 in the `providers` array and
 ```php
-    Zizaco\Entrust\EntrustServiceProvider::class
+    'Entrust'   => Zizaco\Entrust\EntrustFacade::class,
 ```
 to the `aliases` array.
 
