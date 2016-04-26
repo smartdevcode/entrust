@@ -37,50 +37,28 @@ contains the latest entrust version for Laravel 4.
 
 ## Installation
 
-1) In order to install Laravel 5 Entrust, just add the following to your composer.json. Then run `composer update`:
+In order to install Laravel 5 Entrust, just add
 
-```json
-"zizaco/entrust": "5.2.x-dev"
-```
+    "zizaco/entrust": "5.2.x-dev"
 
-2) Open your `config/app.php` and add the following to the `providers` array:
+to your composer.json. Then run `composer install` or `composer update`.
 
+Then in your `config/app.php` add
 ```php
-Zizaco\Entrust\EntrustServiceProvider::class,
+    Zizaco\Entrust\EntrustServiceProvider::class,
 ```
-
-3) In the same `config/app.php` and add the following to the `aliases ` array: 
-
+in the `providers` array and
 ```php
-'Entrust'   => Zizaco\Entrust\EntrustFacade::class,
+    'Entrust'   => Zizaco\Entrust\EntrustFacade::class,
 ```
+to the `aliases` array.
 
-4) Run the command below to publish the package config file `config/entrust.php`:
-
-```shell
-php artisan vendor:publish
-```
-
-5) Open your `config/auth.php` and add the following to it:
-
-```php
-'providers' => [
-    'users' => [
-        'driver' => 'eloquent',
-        'model' => Namespace\Of\Your\User\Model\User::class,
-        'table' => 'users',
-    ],
-],
-```
-
-6)  If you want to use [Middleware](#middleware) (requires Laravel 5.1 or later) you also need to add the following:
-
+If you are going to use [Middleware](#middleware) (requires Laravel 5.1 or later) you also need to add
 ```php
     'role' => \Zizaco\Entrust\Middleware\EntrustRole::class,
     'permission' => \Zizaco\Entrust\Middleware\EntrustPermission::class,
     'ability' => \Zizaco\Entrust\Middleware\EntrustAbility::class,
 ```
-
 to `routeMiddleware` array in `app/Http/Kernel.php`.
 
 ## Configuration
@@ -88,7 +66,8 @@ to `routeMiddleware` array in `app/Http/Kernel.php`.
 Set the property values in the `config/auth.php`.
 These values will be used by entrust to refer to the correct user table and model.
 
-To further customize table names and model namespaces, edit the `config/entrust.php`.
+You can also publish the configuration for this package to further customize table names and model namespaces.  
+Just use `php artisan vendor:publish` and a `entrust.php` file will be created in your app/config directory.
 
 ### User relation to roles
 
