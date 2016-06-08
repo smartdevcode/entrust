@@ -43,6 +43,10 @@ In order to install Laravel 5 Entrust, just add
 
 to your composer.json. Then run `composer install` or `composer update`.
 
+or you can run the `composer require` command from your terminal:
+    
+    composer require zizaco/entrust:5.2.x-dev
+    
 Then in your `config/app.php` add
 ```php
     Zizaco\Entrust\EntrustServiceProvider::class,
@@ -394,7 +398,7 @@ It is possible to use pipe symbol as *OR* operator:
 
 To emulate *AND* functionality just use multiple instances of middleware
 ```php
-'middleware' => ['role:owner', 'role:writer']
+'middleware' => ['permission:owner', 'permission:writer']
 ```
 
 For more complex situations use `ability` middleware which accepts 3 parameters: roles, permissions, validate_all
