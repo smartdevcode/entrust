@@ -28,7 +28,7 @@ class EntrustServiceProvider extends ServiceProvider
     {
         // Publish config files
         $this->publishes([
-            __DIR__.'/../config/config.php' => config_path('entrust.php'),
+            __DIR__.'/../config/config.php' => app()->basePath() . '/config/entrust.php',
         ]);
 
         // Register commands
@@ -59,9 +59,11 @@ class EntrustServiceProvider extends ServiceProvider
      */
     private function bladeDirectives()
     {
+        if (!class_exists('\Blade')) return;
+
         // Call to Entrust::hasRole
         \Blade::directive('role', function($expression) {
-            return "<?php if (\\Entrust::hasRole{$expression}) : ?>";
+            return "<?php if (\\Entrust::hasRole({$expression})) : ?>";
         });
 
         \Blade::directive('endrole', function($expression) {
@@ -70,7 +72,7 @@ class EntrustServiceProvider extends ServiceProvider
 
         // Call to Entrust::can
         \Blade::directive('permission', function($expression) {
-            return "<?php if (\\Entrust::can{$expression}) : ?>";
+            return "<?php if (\\Entrust::can({$expression})) : ?>";
         });
 
         \Blade::directive('endpermission', function($expression) {
@@ -79,7 +81,7 @@ class EntrustServiceProvider extends ServiceProvider
 
         // Call to Entrust::ability
         \Blade::directive('ability', function($expression) {
-            return "<?php if (\\Entrust::ability{$expression}) : ?>";
+            return "<?php if (\\Entrust::ability({$expression})) : ?>";
         });
 
         \Blade::directive('endability', function($expression) {
