@@ -71,7 +71,7 @@ trait EntrustUserTrait
         parent::boot();
 
         static::deleting(function($user) {
-            if (!method_exists(Config::get('auth.providers.users.model'), 'bootSoftDeletes')) {
+            if (!method_exists(Config::get('auth.model'), 'bootSoftDeletes')) {
                 $user->roles()->sync([]);
             }
 
@@ -284,6 +284,20 @@ trait EntrustUserTrait
         foreach ($roles as $role) {
             $this->detachRole($role);
         }
+    }
+
+    /**
+     *Filtering users according to their role 
+     *
+     *@param string $role
+     *@return users collection
+     */
+    public function scopeWithRole($query, $role)
+    {
+        return $query->whereHas('roles', function ($query) use ($role)
+        {
+            $query->where('name', $role);
+        });
     }
 
 }
